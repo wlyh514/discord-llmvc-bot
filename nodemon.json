@@ -1,0 +1,6 @@
+{
+  "execMap": {
+    "ts": "tsx"
+  },
+  "delay": 3000
+}
