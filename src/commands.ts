@@ -10,6 +10,9 @@ const commands = [
   new SlashCommandBuilder()
     .setName('leave')
     .setDescription('Leave the current voice channel. '),
+  new SlashCommandBuilder()
+    .setName('testaudio')
+    .setDescription('Play the testing audio. '),
 ];
 
 

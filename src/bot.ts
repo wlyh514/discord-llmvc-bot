@@ -1,10 +1,15 @@
 // index.js
 import { Client, CommandInteraction, GuildMember } from 'discord.js';
-import { VoiceConnection, VoiceConnectionReadyState, VoiceConnectionStatus, entersState, getVoiceConnection, joinVoiceChannel } from '@discordjs/voice';
+import { VoiceConnection, VoiceConnectionStatus, createAudioPlayer, entersState, getVoiceConnection, joinVoiceChannel } from '@discordjs/voice';
 import dotenv from 'dotenv';
-import { createListeningStream } from './listeningStream';
+import { Soul } from './soul/chain';
+import { Conversation } from './conversation';
+import { textToSpeech } from './speech';
 dotenv.config();
 
+async function getDisplayName(client: Client, userId: string) {
+	return client.users.cache.get(userId)?.displayName ?? (await client.users.fetch(userId)).displayName;
+}
 
 async function join(
 	interaction: CommandInteraction,
@@ -22,9 +27,9 @@ async function join(
 				selfMute: false,
 				adapterCreator: channel.guild.voiceAdapterCreator,
 			});
-			connection.on('stateChange', (_oldstate, newState) => {
-				console.log('state update:', newState.status); 
-			});
+			// connection.on('stateChange', (_oldstate, newState) => {
+			// 	console.log('state update:', newState.status);
+			// });
 			connection.on('error', console.error);
 			connection.on('debug', console.log);
 		} else {
@@ -36,20 +41,37 @@ async function join(
 	try {
 		await entersState(connection, VoiceConnectionStatus.Ready, 20e3);
 		// ((connection.state as VoiceConnectionReadyState).networking.state as any).udp.on('message', console.log); // UDP stops receiving msg after some seconds. Why? 
-		((connection.state as VoiceConnectionReadyState).networking.state as any).udp.on('close', () => console.log('udp closed')); 
-		((connection.state as VoiceConnectionReadyState).networking.state as any).udp.on('debug', (msg: any) => console.log('udp debug', msg)); 
-		((connection.state as VoiceConnectionReadyState).networking.state as any).udp.on('error', (msg: any) => console.log('udp error', msg)); 
+		// ((connection.state as VoiceConnectionReadyState).networking.state as any).udp.on('close', () => console.log('udp closed')); 
+		// ((connection.state as VoiceConnectionReadyState).networking.state as any).udp.on('debug', (msg: any) => console.log('udp debug', msg)); 
+		// ((connection.state as VoiceConnectionReadyState).networking.state as any).udp.on('error', (msg: any) => console.log('udp error', msg)); 
+
 		const receiver = connection.receiver;
-		const startTime = new Date();
-		receiver.speaking.on('start', (userId) => {
-			console.log(Date.now() - startTime.getTime(), client.users.cache.get(userId)?.displayName, 'started');
-			// createListeningStream(receiver, userId, client.users.cache.get(userId));
-		})
-		receiver.speaking.on('end', (userId) => {
-			console.log(Date.now() - startTime.getTime(), client.users.cache.get(userId)?.displayName, 'stopped');
-		})
+
+		const soul = new Soul();
+		const audioPlayer = createAudioPlayer();
+		connection.subscribe(audioPlayer);
+		const conversation = new Conversation(receiver);
 
 
+		// audioPlayer.on('stateChange', (_, newState) => {
+		// 	console.log('player state update', newState.status);
+		// });
+		// audioPlayer.on('error', console.error);
+
+		conversation.on('transcriptionReady', async (...transcriptions) => {
+			const transcriptionsString = (await Promise.all(transcriptions.map(async ({ userId, text }) => `${await getDisplayName(client, userId)}: ${text}`))).join('\n');
+			console.log(transcriptionsString);
+			const response = await soul.chat(transcriptionsString);
+			console.log("AI:", response);
+			if (!response) return;
+
+			// Stream the voice back to the VC
+			const voice = await textToSpeech(response);
+
+			if (voice) {
+				audioPlayer.play(voice);
+			}
+		})
 
 	} catch (error) {
 		console.warn(error);
