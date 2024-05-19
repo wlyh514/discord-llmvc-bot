@@ -13,7 +13,7 @@ importers:
         version: 0.9.0
       '@discordjs/voice':
         specifier: ^0.17.0
-        version: 0.17.0(@discordjs/opus@0.9.0)
+        version: 0.17.0(@discordjs/opus@0.9.0)(node-opus@0.3.3)
       '@langchain/community':
         specifier: ^0.0.57
         version: 0.0.57(discord.js@14.15.2)(lodash@4.17.21)(openai@4.46.1)(ws@8.17.0)
@@ -40,7 +40,7 @@ importers:
         version: 4.46.1
       prism-media:
         specifier: ^1.3.5
-        version: 1.3.5(@discordjs/opus@0.9.0)
+        version: 1.3.5(@discordjs/opus@0.9.0)(node-opus@0.3.3)
       wav:
         specifier: ^1.0.2
         version: 1.0.2
@@ -689,6 +689,9 @@ packages:
   binary-search@1.3.6:
     resolution: {integrity: sha512-nbE1WxOTTrUWIfsfZ4aHGYu5DOuNkbxGokjV6Z2kxfJK3uaAb8zNK1muzOeipoLHZjInT4Br88BHpzevc681xA==}
 
+  bindings@1.2.1:
+    resolution: {integrity: sha512-u4cBQNepWxYA55FunZSM7wMi55yQaN0otnhhilNoWHq0MfOfJeQx0v0mRRpolGOExPjZcl6FtB0BB8Xkb88F0g==}
+
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
 
@@ -746,6 +749,9 @@ packages:
   commander@10.0.1:
     resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
     engines: {node: '>=14'}
+
+  commander@2.20.3:
+    resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
@@ -1134,6 +1140,9 @@ packages:
     resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
     hasBin: true
 
+  nan@2.19.0:
+    resolution: {integrity: sha512-nO1xXxfh/RWNxfd/XPfbIfFk5vgLsAxUR9y5O0cHMJu/AW9U95JLXqthYHjEp+8gQ5p96K9jUp8nbVOxCdRbtw==}
+
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -1152,6 +1161,13 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
+
+  node-opus@0.3.3:
+    resolution: {integrity: sha512-ZQniA8iJ6y/qOTmW6eyzM9m8odt4CIGV0NM9/U03/pYLhGyxy18QXO25WfrWd8XsUYx57tnxll2xxj54CN08uQ==}
+    engines: {node: '>=5.10.0'}
+    cpu: [x64, arm, arm64, ia32]
+    os: [linux, darwin, win32, freebsd, android]
+    deprecated: This project is unmaintained. See @discordjs/opus for an alternative.
 
   nodemon@3.1.0:
     resolution: {integrity: sha512-xqlktYlDMCepBJd43ZQhjWwMw2obW/JRvkrLxq5RCNcuDDX1DbcPT+qT1IlIIdf+DhnWs90JpTMe+Y5KxOchvA==}
@@ -1177,6 +1193,9 @@ packages:
   object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
+
+  ogg-packet@1.0.1:
+    resolution: {integrity: sha512-dW1ok3BMnMikyXGDIgVEckWnlViW8JLWQV4qj9aN/rNRVqHlDYSlcIEtSIMH7tpuUOiIxAhY3+OxNdIOm6s17A==}
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
@@ -1274,6 +1293,12 @@ packages:
   readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
+
+  ref-struct@1.1.0:
+    resolution: {integrity: sha512-h2OSdAUycdqiwFBp2wB3XEFheWA/U+n/JYnhEi3584JqnCCDXIA3qDIhHH3klIHMNZwrJW+VagpxPGeSf6777Q==}
+
+  ref@1.3.5:
+    resolution: {integrity: sha512-2cBCniTtxcGUjDpvFfVpw323a83/0RLSGJJY5l5lcomZWhYpU2cuLdsvYqMixvsdLJ9+sTdzEkju8J8ZHDM2nA==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -1530,11 +1555,11 @@ snapshots:
 
   '@discordjs/util@1.1.0': {}
 
-  '@discordjs/voice@0.17.0(@discordjs/opus@0.9.0)':
+  '@discordjs/voice@0.17.0(@discordjs/opus@0.9.0)(node-opus@0.3.3)':
     dependencies:
       '@types/ws': 8.5.10
       discord-api-types: 0.37.83
-      prism-media: 1.3.5(@discordjs/opus@0.9.0)
+      prism-media: 1.3.5(@discordjs/opus@0.9.0)(node-opus@0.3.3)
       tslib: 2.6.2
       ws: 8.17.0
     transitivePeerDependencies:
@@ -1816,6 +1841,9 @@ snapshots:
 
   binary-search@1.3.6: {}
 
+  bindings@1.2.1:
+    optional: true
+
   brace-expansion@1.1.11:
     dependencies:
       balanced-match: 1.0.2
@@ -1872,6 +1900,9 @@ snapshots:
       delayed-stream: 1.0.0
 
   commander@10.0.1: {}
+
+  commander@2.20.3:
+    optional: true
 
   concat-map@0.0.1: {}
 
@@ -2284,6 +2315,9 @@ snapshots:
 
   mustache@4.2.0: {}
 
+  nan@2.19.0:
+    optional: true
+
   natural-compare@1.4.0: {}
 
   node-addon-api@5.1.0: {}
@@ -2293,6 +2327,17 @@ snapshots:
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
+
+  node-opus@0.3.3:
+    dependencies:
+      bindings: 1.2.1
+      commander: 2.20.3
+      nan: 2.19.0
+    optionalDependencies:
+      ogg-packet: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
 
   nodemon@3.1.0:
     dependencies:
@@ -2323,6 +2368,13 @@ snapshots:
   num-sort@2.1.0: {}
 
   object-assign@4.1.1: {}
+
+  ogg-packet@1.0.1:
+    dependencies:
+      ref-struct: 1.1.0
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
 
   once@1.4.0:
     dependencies:
@@ -2388,9 +2440,10 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prism-media@1.3.5(@discordjs/opus@0.9.0):
+  prism-media@1.3.5(@discordjs/opus@0.9.0)(node-opus@0.3.3):
     optionalDependencies:
       '@discordjs/opus': 0.9.0
+      node-opus: 0.3.3
 
   pstree.remy@1.1.8: {}
 
@@ -2414,6 +2467,23 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
+
+  ref-struct@1.1.0:
+    dependencies:
+      debug: 2.6.9
+      ref: 1.3.5
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
+  ref@1.3.5:
+    dependencies:
+      bindings: 1.2.1
+      debug: 2.6.9
+      nan: 2.19.0
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
 
   resolve-from@4.0.0: {}
 
