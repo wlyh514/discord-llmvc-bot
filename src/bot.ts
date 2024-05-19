@@ -12,6 +12,10 @@ async function join(
 	client: Client,
 ) {
 	await interaction.deferReply();
+	if (getVoiceConnection(interaction.guildId!)) {
+		await interaction.reply({ content: 'Already in a voice channel. ' });
+		return;
+	}
 	const connection = await joinVCOfInteraction(interaction);
 
 	if (connection === null) {
@@ -67,7 +71,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 const obs = new PerformanceObserver((li) => {
-	li.getEntries().forEach(item => console.log(item.name, item.duration));
+	li.getEntries().forEach(item => console.log(item.name, item.duration.toFixed(0), 'ms'));
 });
 obs.observe({ type: 'measure' });
 

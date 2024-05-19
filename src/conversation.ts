@@ -93,7 +93,6 @@ class Conversation {
       performance.measure('TTS', userId + 'speaking_end', userId + 'tts_end');
       const userTranscrption = (this.transcriptions.pending.get(userId) ?? '') + ' ' + text;
       this.transcriptions.pending.set(userId, userTranscrption);
-      console.log('isProcessing', this.isProcessing());
       if (!this.isProcessing()) {
         this.processTranscriptions();
       }
