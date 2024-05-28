@@ -1,11 +1,12 @@
 // index.js
+import dotenv from 'dotenv';
+dotenv.config();
 import { Client, CommandInteraction } from 'discord.js';
 import { VoiceConnectionStatus, entersState, getVoiceConnection } from '@discordjs/voice';
-import dotenv from 'dotenv';
 import { Conversation } from './conversation';
 import { joinVCOfInteraction } from './utils';
 import { PerformanceObserver } from 'node:perf_hooks';
-dotenv.config();
+
 
 async function join(
 	interaction: CommandInteraction,
@@ -63,7 +64,7 @@ client.on('interactionCreate', async interaction => {
 
 	if (commandName === 'ping') {
 		await interaction.reply('pong!');
-	} else if (commandName === 'vc') {
+	} else if (commandName === 'join') {
 		await join(interaction, client);
 	} else if (commandName === 'leave') {
 		await leave(interaction, client);

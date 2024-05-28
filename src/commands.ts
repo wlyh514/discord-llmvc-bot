@@ -5,14 +5,11 @@ const commands = [
     .setName('ping')
     .setDescription('Replies with pong! '),
   new SlashCommandBuilder()
-    .setName('vc')
+    .setName('join')
     .setDescription('Join and start listening to a voice channel. '),
   new SlashCommandBuilder()
     .setName('leave')
     .setDescription('Leave the current voice channel. '),
-  new SlashCommandBuilder()
-    .setName('testaudio')
-    .setDescription('Play the testing audio. '),
 ];
 
 

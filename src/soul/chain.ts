@@ -1,48 +1,86 @@
-import { BaseChatMessageHistory, InMemoryChatMessageHistory } from '@langchain/core/chat_history';
-import { AIMessage, BaseMessage, BaseMessageLike, HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { StringOutputParser } from '@langchain/core/output_parsers';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { ChatOpenAI } from '@langchain/openai';
-import dotenv from 'dotenv';
-dotenv.config();
+import { EventEmitter } from 'node:events';
+import crypto from 'crypto';
+import { graph } from './soul';
+import { AIMessage } from '@langchain/core/messages';
+import { DynamicStructuredTool } from '@langchain/core/tools';
+import { z } from 'zod';
+import { patchFautyFunctionCall } from '../utils';
 
-type InputMessage = {
-  username: string;
-  text: string;
-}
+type ToolCall<T extends DynamicStructuredTool> = {
+  name: T['name'], 
+  id?: string, 
+  args: z.infer<T['schema']>
+};
+
 
 class Soul {
-  static chain = getChain();
-  static systemPrompt = `You are a voice assisstant called GPT. You will be presented with transcriptions of a multi-user voice channel, in the form of <user>:<transcript>. They will try to start a conversation with you by saying "Hey GPT", or by replying to your previous response. If you feel they are expecting a response from you, output your response. Otherwise output <NULL>. 
 
-Try to be friendly, casual and natural, avoid long responses and listing items. 
-`;
+  private threadId = crypto.randomUUID();
+  private _status: 'idle' | 'loading' | 'tool_calling' = 'idle';
+  private taskQueue: number[] = [];
+  private taskQueueEventEmitter = new EventEmitter<{
+    'ready': [number]
+  }>();
+  private taskCounter = 0;
 
-  private history = new InMemoryChatMessageHistory([
-    new SystemMessage(Soul.systemPrompt),
-  ]);
+  get status() {
+    return this._status;
+  }
 
-  async chat(msgs: InputMessage[]): Promise<string | null> {
-    await this.history.addUserMessage(msgs.map(({ username, text }) => `${username}: ${text}`).join('\n'));
-    // TODO: stream? Nah probably not
-    // TODO: Make it an Agent
-    const resp = await Soul.chain.invoke(await this.history.getMessages());
-    await this.history.addAIMessage(resp);
-    if (resp.trim() === '<NULL>') {
-      return null;
+  end() {
+    graph.updateState({
+      configurable: { thread_id: this.threadId },
+    }, null);
+  }
+  
+  async invoke(input: string) {
+    if (this.taskQueue.length === 0) {
+      return this._invoke(input);
     }
-    return resp;
+    const taskId = this.taskCounter++;
+
+    return new Promise<AsyncGenerator<ToolCall<any>, null>>(res => {
+      const onReady = (readyTaskId: number) => {
+        if (readyTaskId === taskId) {
+          this.taskQueueEventEmitter.off('ready', onReady);
+          res(this._invoke(input));
+        }
+      }
+      this.taskQueueEventEmitter.on('ready', onReady);
+    });
+  }
+
+  private async *_invoke(input: string) {
+    this._status = 'loading';
+    for await (const { messages } of await graph.stream(
+      { messages: [['user', input]] }, {
+        configurable: { thread_id: this.threadId }, 
+        streamMode: 'values',
+      }
+    )) {
+      const msg = messages.at(-1);
+      if (msg instanceof AIMessage) {
+        if (msg.content && msg.content === '<NULL>') {
+          break;
+        }
+        if (msg.tool_calls && msg.tool_calls?.length > 0) {
+          this._status = 'tool_calling';
+          for (const toolCall of msg.tool_calls) {
+            yield toolCall;
+          }
+        }
+      }
+    }
+    if (this.taskQueue.length > 0) {
+      const [ nextTaskId ] = this.taskQueue.splice(0, 1);
+      this.taskQueueEventEmitter.emit('ready', nextTaskId);
+    } else {
+      this._status = 'idle';
+    }
+    
+    return null;
   }
 }
 
-function getChain() {
-  const LLM = new ChatOpenAI({
-    model: 'gpt-4o',
-    temperature: 0.8
-  });
-
-  return LLM
-    .pipe(new StringOutputParser());
-}
 
 export { Soul };

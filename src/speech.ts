@@ -29,7 +29,7 @@ export async function textToSpeech(text: string): Promise<AudioResource | null> 
     body: JSON.stringify({
       model: 'tts-1',
       input: text,
-      voice: 'alloy',
+      voice: 'echo',
       response_format: 'opus',
       speed: 1,
     })
@@ -92,7 +92,7 @@ export async function speechToText(opusStream: AudioReceiveStream): Promise<stri
   const sttFormData = new FormData();
   sttFormData.append('file', httpUploadStream, { filename: 'audio.wav' });
   sttFormData.append('model', 'whisper-1');
-  // sttFormData.append('prompt', 'Hey GPT, can you tell me a joke? ');
+  sttFormData.append('prompt', 'Hey GPT. ');
   sttFormData.append('response_format', 'text');
   sttFormData.append('temperature', 0);
 
