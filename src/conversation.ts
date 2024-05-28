@@ -240,6 +240,7 @@ class Conversation {
     this.conn.removeAllListeners();
     this.player.removeAllListeners();
     this.transcriptionExtractor.end();
+    this.soul.end();
   }
 }
 
